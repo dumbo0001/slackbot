@@ -1,9 +1,8 @@
 var os = require('os');
 
-function train(controller) {
+module.exports = function (controller) {
 
     controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function (bot, message) {
-
         bot.api.reactions.add({
             timestamp: message.ts,
             channel: message.channel,
@@ -13,7 +12,6 @@ function train(controller) {
                 bot.botkit.log('Failed to add emoji reaction :(', err);
             }
         });
-
 
         controller.storage.users.get(message.user, function (err, user) {
             if (user && user.name) {
@@ -40,7 +38,6 @@ function train(controller) {
     });
 
     controller.hears(['what is my name', 'who am i'], 'direct_message,direct_mention,mention', function (bot, message) {
-
         controller.storage.users.get(message.user, function (err, user) {
             if (user && user.name) {
                 bot.reply(message, 'Your name is ' + user.name);
@@ -107,11 +104,8 @@ function train(controller) {
         });
     });
 
-
     controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function (bot, message) {
-
         bot.startConversation(message, function (err, convo) {
-
             convo.ask('Are you sure you want me to shutdown?', [
                 {
                     pattern: bot.utterances.yes,
@@ -135,10 +129,8 @@ function train(controller) {
         });
     });
 
-
     controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
         'direct_message,direct_mention,mention', function (bot, message) {
-
             var hostname = os.hostname();
             var uptime = formatUptime(process.uptime());
 
@@ -166,5 +158,3 @@ function train(controller) {
         return uptime;
     }
 };
-
-module.exports = train
