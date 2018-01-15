@@ -4,18 +4,25 @@ var fs = require('fs');
 
 module.exports = function (controller) {
     controller.webserver.post('/teamcity/incoming', function (req, res) {
-        console.log(req.body);
-
-        if (req.body.build && req.body.build.status == "FAILURE"){
-            var bot = controller.spawn();
-            bot.say("Uh-oh.. Something went wrong with a build");
+        if (req.body.build && req.body.channel) {
+            if (req.body.build.status == "FAILURE") {
+                controller.bot.say({
+                    text: "Uh-oh.. Something went wrong with a build",
+                    channel: `${req.body.channel}`
+                });
+            } else {
+                controller.bot.say({
+                    text: "Build finished without any problems.",
+                    channel: `${req.body.channel}`
+                });
+            }
         }
 
         res.send('ok');
     });
 
     controller.hears(['what is the (status of the build|build status)', 'is the build (.+)?(broken|successful|fine)',
-        'are there (.+)?problems with the build'],
+        'are there (.+)?problems with the build', 'give (.+)?(status|update) of the build'],
         'direct_message,direct_mention,mention', function (bot, message) {
             bot.startConversation(message, function (err, convo) {
                 var words = [

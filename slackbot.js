@@ -16,9 +16,10 @@ var controller = Botkit.slackbot(bot_options);
 controller.setupWebserver(process.env.port,function(err,webserver) {
 });
 
-controller.spawn({
+var bot = controller.spawn({
     token: process.env.token
 }).startRTM();
+controller.bot = bot;
 
 var normalizedPath = require("path").join(__dirname, "skills");
   require("fs").readdirSync(normalizedPath).forEach(function(file) {
